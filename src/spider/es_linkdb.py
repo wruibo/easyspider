@@ -10,17 +10,12 @@ import threading
 from esutil import es_digest
 from es_error import es_error
 
-
-
 class es_linkdb(object):
     def __init__(self, workdir):
         #working directory for persistance
         self._linkdb_dir = workdir+"/links"
         #all history links crawled, key->sha1(url), value-><title, url, ref>
         self._linkdb_file = self._linkdb_dir+"/links.db"
-
-        #file queues for persistent the new links
-        self._fileq = es_fileq(workdir, "new_links_", 10000)
 
         #lock for thread access safety
         self._lock = threading.Lock()
@@ -40,13 +35,13 @@ class es_linkdb(object):
         #load the link db if exist otherwise create it
         self._linkdb = bsddb.btopen(self._linkdb_file, 'c')
 
-        #current links for crawling
-        self._currlinks = []
+        #new links for crawling
+        self._newlinks = []
 
     def __close(self):
         self._lock.acquire()
 
-        self.__flush_newlinks_to_file()
+        self._linkdb.close()
 
         self._lock.release()
 
@@ -60,8 +55,6 @@ class es_linkdb(object):
                 self._newlinks.append(link)
                 self._linkdb[urlsha1] = self.__make_link_record(link)
 
-        self.__flush_next_newlink_file()
-
         self._lock.release()
 
     def pop_links(self, num = None):
@@ -69,13 +62,10 @@ class es_linkdb(object):
         if(not num): num = 1
         self._lock.acquire()
 
-        if(not self._currlinks):
-           self.__load_next_newlink_file()
-
-        if(self._currlinks): 
-            links = self._currlinks[0:num]
-            self._currlinks = self._currlinks[num:]
-
+        if(self._newlinks): 
+            links = self._newlinks[0:num]
+            self._newlinks = self._newlinks[num:]
+            
         self._lock.release()
         return links
 
@@ -83,11 +73,8 @@ class es_linkdb(object):
         link = None
         self._lock.acquire()
 
-        if(not self._currlinks):
-           self._currlinks = 
-
-        if(self._currlinks): 
-            link = self._currlinks.pop(0)
+        if(self._newlinks): 
+            link = self._newlinks.pop(0)
 
         self._lock.release()
         return link

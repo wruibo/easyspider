@@ -28,7 +28,7 @@ def parse_baseurl(uurl):
         return baseurl
     raise es_error("parse base url from url failed.", __file__)
 
-def extract_text(uhtml):
+def extract_title(uhtml):
     utext = []
     pos, endpos, is_datafield = 0, len(uhtml), True
     while pos<endpos:
@@ -41,4 +41,10 @@ def extract_text(uhtml):
                 utext.append(uhtml[pos])
         pos += 1
     
-    return u''.join(utext)
+    title = u''.join(utext)
+    if(not title):
+        altrule = re.compile(ur'alt=["|\']*([^"\']+)["|\']*')
+        titles = altrule.findall(uhtml)
+        if(titles):title = titles[0]
+
+    return title

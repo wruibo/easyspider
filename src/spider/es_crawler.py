@@ -32,8 +32,9 @@ class es_crawler(threading.Thread):
         link = self._linkdb.pop_link()
         return link
 
-    def fetch_html(self, url):
+    def fetch_html(self, link):
         try:
+            title, url, ref = link
             req = urllib2.urlopen(url)
             uhtml = es_html.html2unicode(req.read())
             req.close()

@@ -9,25 +9,37 @@ class es_parser(object):
     #regex for parse out the url & text from a html
     _linkre = re.compile(ur'<a.* href="([^"]+)"[^>]*>(.*)</a>', re.IGNORECASE)
 
-    #parse 
-    def parse(self, url, ref, uhtml):
+    #parse links from html content
+    def parse(self, link, uhtml):
         try:
+            title, url, ref = link
             baseurl = es_html.parse_baseurl(url)
-            relative_links = self._linkre.findall(uhtml)
+            relative_links = self.__clean(self._linkre.findall(uhtml))
             links = []
-            for link in relative_links:
-                url, title = link
-                if(not url.startswith(u'/') and not url.startswith(u'http')): continue
-
-                if(url.startswith(u'/')):
-                    url = baseurl + url[1:]
-                title = es_html.extract_text(title)
-                links.append((title, url, ref))
+            for newlink in relative_links:
+                newurl, newtitle = newlink
+                if(not newurl.startswith(u'/') and not newurl.startswith(u'http')): continue
+                if(newurl.startswith(u'/')):
+                    newurl = baseurl + newurl[1:]
+                newtitle = es_html.extract_title(newtitle)
+                links.append((newtitle, newurl, url))
             return links
         except Exception as err:
             raise es_error(err.message)
         finally:
             pass
+
+    def __clean(self, links):
+        tmpdict = {}
+        for url, title in links:
+            if(not tmpdict.has_key(url)):
+                tmpdict[url] = (url, title)
+            else:
+                if(title and not tmpdict[url][1]):
+                    tmpdict[url] = (url, title)
+        return tmpdict.values()
+
+
 
 if(__name__ == "__main__"):
     import sys

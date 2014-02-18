@@ -5,13 +5,16 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{f97d070c-5ae6-42f9-9094-19dd10bc9738}</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>easyspider.py</StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <StartupFile>spider\es_spider.py</StartupFile>
+    <SearchPath>..\src</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>easyspider</Name>
     <RootNamespace>easyspider</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments>http://movie.letv.com/</CommandLineArguments>
+    <InterpreterPath />
+    <InterpreterArguments />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,6 +29,7 @@
     <Compile Include="esutil\es_digest.py" />
     <Compile Include="esutil\es_html.py" />
     <Compile Include="esutil\__init__.py" />
+    <Compile Include="mgmt\es_manager.py" />
     <Compile Include="spider\es_pipe.py" />
     <Compile Include="spider\es_crawler.py" />
     <Compile Include="spider\es_cfgdb.py" />

@@ -1,7 +1,7 @@
 import sys
 sys.path.append("..")
 
-from es_pipe import es_es_pipe
+from es_pipe import es_pipe
 from es_filter import es_filter
 from es_parser import es_parser
 from es_linkdb import es_linkdb
@@ -46,6 +46,7 @@ if(__name__ == '__main__'):
     myspider = es_spider("../")
     myspider.allow(r'http://www.letv.com/ptv/vplay/.*')
     myspider.allow(r'http://movie.letv.com/.*')
+    myspider.allow(r'http://www.letv.com/movie/.*')
     myspider.allow(r'http://list.letv.com/listn/.*')
     myspider.allow(r'http://www.letv.com/')
 
